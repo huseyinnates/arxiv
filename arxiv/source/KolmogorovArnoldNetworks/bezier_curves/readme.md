@@ -7,10 +7,10 @@ This project demonstrates how to create and interact with a Bézier curve using 
 - Move control points by dragging them with the left mouse button.
 - Toggle between looping and non-looping
 - Adjust the speed of the moving object
-## Bernstein Based Bezier Formula
+## Bernstein Polynomial-Based Bezier Formula
 ![Screenshot](./images/bernsteinpoly.png)
 
-## Cox-de Boor Based BSpline
+## Cox-de Boor Polynomial-Based B-Splines
 ![Screenshot](./images/cox_de_boor.png)
 
 ## App
