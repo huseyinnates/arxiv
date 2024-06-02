@@ -1,4 +1,4 @@
-#Bezier Curve with Control Points
+# Bezier Curve with Control Points
 
 This project demonstrates how to create and interact with a Bézier curve using Pygame. Users can add control points, move them, and visualize a moving object that follows the curve. The speed of the moving object can be controlled using a slider.
 
@@ -14,3 +14,4 @@ This project demonstrates how to create and interact with a Bézier curve using 
 
 
 
+ 
