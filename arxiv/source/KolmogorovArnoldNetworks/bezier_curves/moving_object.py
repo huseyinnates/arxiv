@@ -23,4 +23,4 @@ class MovingObject:
         self.speed = speed
 
     def get_speed(self):
-        return self.speed  
+        return self.speed
