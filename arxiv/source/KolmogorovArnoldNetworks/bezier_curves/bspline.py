@@ -1,7 +1,7 @@
 import numpy as np
 
 class BSpline:
-    def __init__(self, control_points, degree=3, num_points=100):
+    def __init__(self, control_points, degree=3, num_points=300):
         self.control_points = control_points
         self.degree = degree
         self.num_points = num_points
@@ -40,3 +40,4 @@ class BSpline:
     def update_knot_vector(self, new_knots):
         if len(new_knots) == len(self.knot_vector):
             self.knot_vector = np.array(new_knots, dtype='float')
+

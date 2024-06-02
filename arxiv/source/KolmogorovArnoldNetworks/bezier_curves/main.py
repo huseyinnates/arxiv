@@ -37,8 +37,15 @@ slider_handle_rect = pygame.Rect(50, 540, 10, 30)
 slider_dragging = False
 speed_label_rect = pygame.Rect(10, 540, 40, 30)
 
+degree_slider_rect = pygame.Rect(300, 500, 200, 10)
+degree_handle_rect = pygame.Rect(300, 490, 10, 30)
+degree_dragging = False
+degree_label_rect = pygame.Rect(300, 460, 200, 30)
+degree = 3
+
 # Initialize slider handle position based on default speed
 slider_handle_rect.x = int(slider_rect.x + (default_speed / 0.01) * slider_rect.width)
+degree_handle_rect.x = int(degree_slider_rect.x + (degree / 10) * degree_slider_rect.width)
 
 # Toggle for continuous shapes
 toggle_rect = pygame.Rect(300, 540, 100, 30)
@@ -51,11 +58,16 @@ start_button_bezier = pygame.Rect(250, 250, 150, 50)
 start_button_bspline = pygame.Rect(450, 250, 150, 50)
 start_screen = True
 
-def draw_ui(speed):
+def draw_ui(speed, degree):
     pygame.draw.rect(screen, (200, 200, 200), slider_rect)
     pygame.draw.rect(screen, (100, 100, 100), slider_handle_rect)
     speed_text = font.render(f'{speed:.3f}', True, (255, 255, 255))
     screen.blit(speed_text, speed_label_rect)
+    
+    pygame.draw.rect(screen, (200, 200, 200), degree_slider_rect)
+    pygame.draw.rect(screen, (100, 100, 100), degree_handle_rect)
+    degree_text = font.render(f'Degree: {degree}', True, (255, 255, 255))
+    screen.blit(degree_text, degree_label_rect)
     
     toggle_color = BUTTON_ACTIVE if toggle else BUTTON_INACTIVE
     pygame.draw.rect(screen, toggle_color, toggle_rect)
@@ -71,7 +83,7 @@ def calculate_curve():
     global curve_points
     if use_bspline:
         if len(control_points) > 1:
-            bspline = BSpline(control_points)
+            bspline = BSpline(control_points, degree=degree)
             if len(knot_points) == len(bspline.knot_vector):
                 bspline.update_knot_vector(knot_points)
             curve_points = bspline.calculate()
@@ -97,6 +109,7 @@ def draw_start_screen():
     pygame.display.flip()
 
 # Main loop
+object_drawing=False
 running = True
 selected_point = None
 selected_knot = None
@@ -104,33 +117,32 @@ redraw_needed = True
 clock = pygame.time.Clock()
 
 def object_movement():
-
-    if(moving_object!=None):
+    if(not object_drawing):
+        return
+    if moving_object:
         moving_object.update()
-        print(moving_object.get_speed())
 
-        screen.fill(BACKGROUND)
-        if len(control_points) > 1 and len(curve_points) > 0:
-            pygame.draw.lines(screen, LINE, False, curve_points, 2)
-        
-        for point in control_points:
-            pygame.draw.circle(screen, POINT, point, 5)
+    screen.fill(BACKGROUND)
+    if len(control_points) > 1 and len(curve_points) > 0:
+        pygame.draw.lines(screen, LINE, False, curve_points, 2)
+    
+    for point in control_points:
+        pygame.draw.circle(screen, POINT, point, 5)
 
-        if len(control_points) > 1:
-            for i in range(len(control_points) - 1):
-                pygame.draw.line(screen, CONTROL_LINE, control_points[i], control_points[i + 1], 1)
-        
-        if len(control_points) > 1:
-            for i, knot in enumerate(knot_points):
-                pygame.draw.circle(screen, KNOT, (int(knot / (len(control_points) - 1) * 800), 520), 5)
-        
-        if moving_object:
-            moving_object.draw(screen, OBJECT_COLOR)
-        
-        if moving_object:
-            draw_ui(moving_object.speed)
-        
-        pygame.display.flip()
+    if len(control_points) > 1:
+        for i in range(len(control_points) - 1):
+            pygame.draw.line(screen, CONTROL_LINE, control_points[i], control_points[i + 1], 1)
+    
+    if len(control_points) > 1:
+        for i, knot in enumerate(knot_points):
+            pygame.draw.circle(screen, KNOT, (int(knot / (len(control_points) - 1) * 800), 520), 5)
+    
+    if moving_object:
+        moving_object.draw(screen, OBJECT_COLOR)
+    
+    draw_ui(moving_object.speed if moving_object else default_speed, degree)
+    
+    pygame.display.flip()
 
 while running:
     object_movement() 
@@ -155,6 +167,7 @@ while running:
                     calculate_curve()
                     if not moving_object and len(curve_points) > 0:
                         moving_object = MovingObject(curve_points, default_speed)
+                        object_drawing=True
                     redraw_needed = True
                 elif event.button == 1:  # Left-click to select a point or knot
                     for point in control_points:
@@ -165,6 +178,8 @@ while running:
                             selected_knot = i
                     if slider_handle_rect.collidepoint(event.pos):
                         slider_dragging = True
+                    if degree_handle_rect.collidepoint(event.pos):
+                        degree_dragging = True
                     if toggle_rect.collidepoint(event.pos):
                         toggle = not toggle
                         calculate_curve()
@@ -179,6 +194,7 @@ while running:
                     selected_point = None
                     selected_knot = None
                     slider_dragging = False
+                    degree_dragging = False
 
             elif event.type == pygame.MOUSEMOTION:
                 if selected_point:
@@ -196,13 +212,17 @@ while running:
                     if moving_object:
                         moving_object.set_speed(speed)
                     redraw_needed = True
+                if degree_dragging:
+                    degree_handle_rect.x = min(max(event.pos[0], degree_slider_rect.x), degree_slider_rect.x + degree_slider_rect.width - degree_handle_rect.width)
+                    degree = int((degree_handle_rect.x - degree_slider_rect.x) / degree_slider_rect.width * 10)
+                    calculate_curve()
+                    redraw_needed = True
 
         if start_screen:
             draw_start_screen()
         else:
             # Update the moving object
             if moving_object:
-                print(moving_object.get_speed())
                 moving_object.update()
 
             if redraw_needed:
@@ -226,13 +246,13 @@ while running:
                 if moving_object:
                     moving_object.draw(screen, OBJECT_COLOR)
                 
-                if moving_object:
-                    draw_ui(moving_object.speed)
+                draw_ui(moving_object.speed if moving_object else default_speed, degree)
                 
                 pygame.display.flip()
                 redraw_needed = False
-       
-
+        
+        # Ensure the frame rate is consistent
+        clock.tick(60)
 
 pygame.quit()
 sys.exit()

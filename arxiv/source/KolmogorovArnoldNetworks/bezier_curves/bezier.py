@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-def bezier_curve(points, num_points=100, loop=False):
+def bezier_curve(points, num_points=300, loop=False):
     if loop:
         points = points + [points[0]]
     n = len(points) - 1

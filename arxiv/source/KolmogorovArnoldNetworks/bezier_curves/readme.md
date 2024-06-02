@@ -14,4 +14,4 @@ This project demonstrates how to create and interact with a Bézier curve using 
 ![Screenshot](./images/cox_de_boor.png)
 
 ## App
-![Screenshot](./images/bezier-curve.png)
+![Screenshot](./images/demo.png)
