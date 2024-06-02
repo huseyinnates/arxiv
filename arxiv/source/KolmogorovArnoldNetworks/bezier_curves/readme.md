@@ -10,5 +10,8 @@ This project demonstrates how to create and interact with a Bézier curve using 
 ## Bernstein Based Bezier Formula
 ![Screenshot](./images/bernsteinpoly.png)
 
+## Cox-de Boor
+![Screenshot](./images/cox_de_boor.png)
+
 ## App
 ![Screenshot](./images/bezier-curve.png)
