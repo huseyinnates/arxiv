@@ -5,10 +5,8 @@ This project demonstrates how to create and interact with a Bézier curve using 
 ## Features
 - Add control points with a right-click.
 - Move control points by dragging them with the left mouse button.
-- Toggle between looping and non-looping curve with a toggle button.
-- Adjust the speed of the moving object with a slider.
-- Display the current speed value next to the slider.
-
+- Toggle between looping and non-looping
+- Adjust the speed of the moving object
 ## Bernstein Based Bezier Formula
 ![Screenshot](./images/bernsteinpoly.png)
 
