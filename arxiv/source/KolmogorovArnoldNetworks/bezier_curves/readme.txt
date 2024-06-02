@@ -1,0 +1,1 @@
+this codes introduces the bezier curves.To grasp logic behind the KAN this will be great warmup
